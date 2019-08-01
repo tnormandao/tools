@@ -1,0 +1,39 @@
+class DependencyConnector {
+  constructor( dependencyLinks, expression ){
+  	this.dependencyLinks = dependencyLinks || [];
+  	this.expressionCallback = expression;
+    this.nextDependencyLoad();
+  }
+  
+  nextDependencyLoad(){
+  	if( this.dependencyLinks.length ){
+    		const nextLink = this.dependencyLinks.shift();
+      fetch( nextLink ).then( ( data ) => {
+        	data.text().then( ( resultText ) => {
+              const nextScriptText = resultText;
+              const nextScriptElement = document.createElement( 'script' );
+              nextScriptElement.type = 'text/javascript';
+              nextScriptElement.id = 'customScript_' + 
+                                      this.dependencyLinks.length;
+              nextScriptElement.text = nextScriptText;
+              document.head.appendChild( nextScriptElement );
+              this.nextDependencyLoad()
+          }, () => {} );
+      } );
+    } else {
+    	this.expressionCallback();
+    }
+  }
+  
+};
+
+// USAGE ---->
+new DependencyConnector( [
+  'https://code.jquery.com/jquery-3.4.1.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js'
+], () => {
+
+    console.log( { $ } );
+    console.log( { THREE } );
+    
+});
