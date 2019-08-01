@@ -6,15 +6,16 @@ class DependencyConnector {
   }
   
   nextDependencyLoad(){
-  	if( this.dependencyLinks.length ){
-    		const nextLink = this.dependencyLinks.shift();
+  	const keys = Object.keys( this.dependencyLinks );
+  	if( keys ){
+    	const nextLinkKey = this.dependencyLinks.shift();
+      const nextLink = this.dependencyLinks[ nextLinkKey ];
       fetch( nextLink ).then( ( data ) => {
         	data.text().then( ( resultText ) => {
               const nextScriptText = resultText;
               const nextScriptElement = document.createElement( 'script' );
               nextScriptElement.type = 'text/javascript';
-              nextScriptElement.id = 'customScript_' + 
-                                      this.dependencyLinks.length;
+              nextScriptElement.id = 'customScript_' + nextLinkKey;
               nextScriptElement.text = nextScriptText;
               document.head.appendChild( nextScriptElement );
               this.nextDependencyLoad()
@@ -26,14 +27,15 @@ class DependencyConnector {
   }
   
 };
-
 // USAGE ---->
-new DependencyConnector( [
-  'https://code.jquery.com/jquery-3.4.1.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js'
-], () => {
+/*
+new DependencyConnector( {
+  jQuery: 'https://code.jquery.com/jquery-3.4.1.min.js', // for test
+  THREE: 'https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js'
+}, () => {
 
     console.log( { $ } );
     console.log( { THREE } );
     
 });
+*/
