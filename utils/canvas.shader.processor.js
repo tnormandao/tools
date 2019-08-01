@@ -238,156 +238,157 @@ function CanvasVideoRecorder( canvas, _resultRecordName, __format ) {
   
 
 
-// demo scripts
-const can = document.getElementById( 'testCanvas' );
-can.width = 320;
-can.height = 240;
-const ctx = can.getContext( '2d' );
-ctx.fillStyle = '#ff0000';
-let nextYPosition = 0;
-let testPosition = 0;
-let lastPosition = 0;
-let lineHeight = 1;
-/* let lineGeight = can.height/80; */
+// // demo scripts
+// const can = document.getElementById( 'testCanvas' );
+// can.width = 320;
+// can.height = 240;
+// const ctx = can.getContext( '2d' );
+// ctx.fillStyle = '#ff0000';
+// let nextYPosition = 0;
+// let testPosition = 0;
+// let lastPosition = 0;
+// let lineHeight = 1;
+// /* let lineGeight = can.height/80; */
 
-let record_name = 'test_record';
-let record_ext = 'webm';
-let recordIsActive = false;
-let recorder = null;
+// let record_name = 'test_record';
+// let record_ext = 'webm';
+// let recordIsActive = false;
+// let recorder = null;
 
-const recordName_i = document.getElementById( 'recordName' );
-recordName_i.addEventListener( 'input', ( e ) => {
-	record_name = e.target.value;
-} );
+// const recordName_i = document.getElementById( 'recordName' );
+// recordName_i.addEventListener( 'input', ( e ) => {
+// 	record_name = e.target.value;
+// } );
 
-const recordButton = document.getElementById( 'record' );
-recordButton.style.backgroundColor = '#dddddd';
-recordButton.addEventListener( 'click', () => {
-	if( recordIsActive ){
- 	 	recordButton.innerText = 'record';
- 	 	recordButton.style.backgroundColor = '#dddddd';
-    recordIsActive = false;
-    recorder.stop();
-    recorder = null;
-  } else {
- 	 	recordButton.innerText = 'stop';
- 	 	recordButton.style.backgroundColor = '#ffdddd';
-    recordIsActive = true;
-  	recorder = CanvasVideoRecorder( can, record_name, record_ext );
-    recorder.start();
-  }
-} );
+// const recordButton = document.getElementById( 'record' );
+// recordButton.style.backgroundColor = '#dddddd';
+// recordButton.addEventListener( 'click', () => {
+// 	if( recordIsActive ){
+//  	 	recordButton.innerText = 'record';
+//  	 	recordButton.style.backgroundColor = '#dddddd';
+//     recordIsActive = false;
+//     recorder.stop();
+//     recorder = null;
+//   } else {
+//  	 	recordButton.innerText = 'stop';
+//  	 	recordButton.style.backgroundColor = '#ffdddd';
+//     recordIsActive = true;
+//   	recorder = CanvasVideoRecorder( can, record_name, record_ext );
+//     recorder.start();
+//   }
+// } );
 
-const nextImage = new Image();
+// const nextImage = new Image();
 
-console.log( { nextImage } );
+// console.log( { nextImage } );
 
-const testCanvasShader = new CanvasShaderProcessor( {
-    canvas: can,
-    uniforms: {
-        time: 0,
-        texture: nextImage
-    },
-    fragmentShader: {
-        varyings: {
-            testPixel: [ 0, 2 ]
-        },
-        shader: function() {
+// const testCanvasShader = new CanvasShaderProcessor( {
+//     canvas: can,
+//     uniforms: {
+//         time: 0,
+//         texture: nextImage
+//     },
+//     fragmentShader: {
+//         varyings: {
+//             testPixel: [ 0, 2 ]
+//         },
+//         shader: function() {
 
-            const uv = this.uv;
-            const size = this.size;
-            const time = this.uniforms.time;
+//             const uv = this.uv;
+//             const size = this.size;
+//             const time = this.uniforms.time;
             
-            const testPixel = this.varyings.testPixel;
+//             const testPixel = this.varyings.testPixel;
 
-            const RGBA_OUT = [ 0, 0, 0, 255 ];
+//             const RGBA_OUT = [ 0, 0, 0, 255 ];
             
-            const colorFactor = 333;
-            const sizeFactor = 0.01;
+//             const colorFactor = 333;
+//             const sizeFactor = 0.01;
             
-            const uvFactor = 23.3;
+//             const uvFactor = 23.3;
             
-            const widthFrames = 3315;
-            const heightFrames = 3315;
+//             const widthFrames = 3315;
+//             const heightFrames = 3315;
             
-            const timeAlpha = 0.5 + Math.sin( time * sizeFactor * Math.PI ) * 0.5;
+//             const timeAlpha = 0.5 + Math.sin( time * sizeFactor * Math.PI ) * 0.5;
             
-            let framedUV = [
-            		( uv[0] * widthFrames ) % 1,
-            		( uv[1] * heightFrames ) % 1,
-            ];
+//             let framedUV = [
+//             		( uv[0] * widthFrames ) % 1,
+//             		( uv[1] * heightFrames ) % 1,
+//             ];
             
-            framedUV = uv;
+//             framedUV = uv;
 
-            const R_Color = 0.5 + Math.sin(
-            	Math.sin( framedUV[0] * 1.3 * timeAlpha + time * 0.01 ) * Math.PI
-            ) * 0.5;
+//             const R_Color = 0.5 + Math.sin(
+//             	Math.sin( framedUV[0] * 1.3 * timeAlpha + time * 0.01 ) * Math.PI
+//             ) * 0.5;
             
-            const B_Color = 0.5 + Math.cos(
-            	Math.cos( framedUV[1] * 1.3 * timeAlpha ) * Math.PI
-            ) * 0.5;
+//             const B_Color = 0.5 + Math.cos(
+//             	Math.cos( framedUV[1] * 1.3 * timeAlpha ) * Math.PI
+//             ) * 0.5;
             
-            const G_Color = 0.5 + Math.cos(
-            	Math.sin(  ( R_Color + B_Color ) * timeAlpha ) * Math.PI
-            ) * 0.5;
+//             const G_Color = 0.5 + Math.cos(
+//             	Math.sin(  ( R_Color + B_Color ) * timeAlpha ) * Math.PI
+//             ) * 0.5;
             
-            const textureRGBA = this.texture2D( this.uniforms.texture, [
-            	R_Color, 
-              B_Color
-            ] );
+//             const textureRGBA = this.texture2D( this.uniforms.texture, [
+//             	R_Color, 
+//               B_Color
+//             ] );
             
-            RGBA_OUT[ 0 ] = Math.floor( ( R_Color + textureRGBA[ 0 ] / 255 ) * 255 * 0.5 );
-            RGBA_OUT[ 1 ] = Math.floor( ( G_Color + textureRGBA[ 1 ] / 255 ) * 255 * 0.5 );
-            RGBA_OUT[ 2 ] = Math.floor( ( B_Color + textureRGBA[ 2 ] / 255 ) * 255 * 0.5 );
+//             RGBA_OUT[ 0 ] = Math.floor( ( R_Color + textureRGBA[ 0 ] / 255 ) * 255 * 0.5 );
+//             RGBA_OUT[ 1 ] = Math.floor( ( G_Color + textureRGBA[ 1 ] / 255 ) * 255 * 0.5 );
+//             RGBA_OUT[ 2 ] = Math.floor( ( B_Color + textureRGBA[ 2 ] / 255 ) * 255 * 0.5 );
 
- 						// return RGBA_OUT;
-            return textureRGBA;
+//  						// return RGBA_OUT;
+//             return textureRGBA;
 
-        }
-    }
-} );
+//         }
+//     }
+// } );
 
-nextImage.crossOrigin = '*';
-nextImage.src = 'https://picsum.photos/200/300/';
+// nextImage.crossOrigin = '*';
+// nextImage.src = 'https://picsum.photos/200/300/';
 
-testCanvasShader.updateSize(
-	 Math.floor( can.width * 0.35 ),
-	 Math.floor( can.height * 0.35 )
-);
+// testCanvasShader.updateSize(
+// 	 Math.floor( can.width * 0.35 ),
+// 	 Math.floor( can.height * 0.35 )
+// );
 
-let positionsPreFrame = 1300;
-let XX = 0;
-let YY = 0;
+// let positionsPreFrame = 1300;
+// let XX = 0;
+// let YY = 0;
 
-console.log( ctx.getImageData( 50, 50, 1, 1 ) );
+// console.log( ctx.getImageData( 50, 50, 1, 1 ) );
 
-const animator = () => {
+// const animator = () => {
 
-		const intervalFactor = 0.3;
+// 		const intervalFactor = 0.3;
 
-		testCanvasShader.uniforms.time ++;
+// 		testCanvasShader.uniforms.time ++;
 
-		for( let i = 0; i < testCanvasShader.size[ 0 ] * testCanvasShader.size[ 1 ]; i++ ){
+// 		for( let i = 0; i < testCanvasShader.size[ 0 ] * testCanvasShader.size[ 1 ]; i++ ){
    
-	    testCanvasShader.render( XX, YY );
+// 	    testCanvasShader.render( XX, YY );
       
-			/* */       
-			if( XX == testCanvasShader.size[ 0 ] ){
-        YY++;
-      }
+// 			/* */       
+// 			if( XX == testCanvasShader.size[ 0 ] ){
+//         YY++;
+//       }
       
-      if( XX <= testCanvasShader.size[ 0 ] ){
-        XX++;
-      } else {
-        XX = 0;
-      }
+//       if( XX <= testCanvasShader.size[ 0 ] ){
+//         XX++;
+//       } else {
+//         XX = 0;
+//       }
         
-      if( YY === testCanvasShader.size[ 1 ] ){
-        YY = 0;
-      }
+//       if( YY === testCanvasShader.size[ 1 ] ){
+//         YY = 0;
+//       }
       
-    }
+//     }
 
-    requestAnimationFrame( animator );
-};
-animator();
+//     requestAnimationFrame( animator );
+// };
+// animator();
+
