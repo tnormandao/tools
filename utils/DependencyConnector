@@ -1,14 +1,14 @@
 class DependencyConnector {
   constructor( dependencyLinks, expression ){
-  	this.dependencyLinks = dependencyLinks || [];
+  	this.dependencyLinks = dependencyLinks || {};
   	this.expressionCallback = expression;
+  	this.toloadDependencyKeys = Object.keys( this.dependencyLinks );
     this.nextDependencyLoad();
   }
   
   nextDependencyLoad(){
-  	const keys = Object.keys( this.dependencyLinks );
-  	if( keys ){
-    	const nextLinkKey = this.dependencyLinks.shift();
+  	if( this.toloadDependencyKeys.length ){
+    	const nextLinkKey = this.toloadDependencyKeys.shift();
       const nextLink = this.dependencyLinks[ nextLinkKey ];
       fetch( nextLink ).then( ( data ) => {
         	data.text().then( ( resultText ) => {
@@ -18,6 +18,7 @@ class DependencyConnector {
               nextScriptElement.id = 'customScript_' + nextLinkKey;
               nextScriptElement.text = nextScriptText;
               document.head.appendChild( nextScriptElement );
+		          console.log( 'loaded: ', nextLinkKey, ' [' + nextLink + ']' );
               this.nextDependencyLoad()
           }, () => {} );
       } );
@@ -27,6 +28,7 @@ class DependencyConnector {
   }
   
 };
+
 // USAGE ---->
 /*
 new DependencyConnector( {
