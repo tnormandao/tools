@@ -1,5 +1,6 @@
 class DependencyConnector {
   constructor( dependencyLinks, expression ){
+    this.bundle = '';
   	this.dependencyLinks = dependencyLinks || {};
   	this.expressionCallback = expression;
   	this.toloadDependencyKeys = Object.keys( this.dependencyLinks );
