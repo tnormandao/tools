@@ -235,7 +235,7 @@ function CanvasVideoRecorder( canvas, _resultRecordName, __format ) {
   }
   
 
-  console.log( 'TEST TEST TEST' );
+  console.log( 'TEST CHANGES' );
 
 
 // // demo scripts
