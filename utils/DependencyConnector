@@ -4,6 +4,23 @@ class DependencyConnector {
   	this.expressionCallback = expression;
   	this.toloadDependencyKeys = Object.keys( this.dependencyLinks );
     this.nextDependencyLoad();
+    this.bundle = '';
+  }
+  
+  initBundle(){
+  	return new Promise( ( resolveBundle, rejectBundle ) => {
+    	try {
+        const nextScriptText = this.bundle;
+        const nextScriptElement = document.createElement( 'script' );
+        nextScriptElement.type = 'text/javascript';
+        nextScriptElement.id = 'customScriptBundle';
+        nextScriptElement.text = nextScriptText;
+        document.head.appendChild( nextScriptElement );
+        resolveBundle();
+      } catch( err ){
+      		rejectBundle( err );
+      }
+    } );
   }
   
   nextDependencyLoad(){
@@ -12,18 +29,17 @@ class DependencyConnector {
       const nextLink = this.dependencyLinks[ nextLinkKey ];
       fetch( nextLink ).then( ( data ) => {
         	data.text().then( ( resultText ) => {
-              const nextScriptText = resultText;
-              const nextScriptElement = document.createElement( 'script' );
-              nextScriptElement.type = 'text/javascript';
-              nextScriptElement.id = 'customScript_' + nextLinkKey;
-              nextScriptElement.text = nextScriptText;
-              document.head.appendChild( nextScriptElement );
-		          console.log( 'loaded: ', nextLinkKey, ' [' + nextLink + ']' );
+          		this.bundle += '\n\n\n';
+          		this.bundle += resultText;
               this.nextDependencyLoad()
           }, () => {} );
       } );
     } else {
-    	this.expressionCallback();
+    	this.initBundle().then( () => {
+    		this.expressionCallback();
+      }, ( rejectReason ) => {
+      	console.err( rejectReason );
+      } );
     }
   }
   
